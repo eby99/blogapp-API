@@ -26,6 +26,34 @@ app.post("/signup", async (req, res) => {
 
 })
 
+app.post("/login", (req,res) => {
+    // res.json({"status":"success"})
+    let input=req.body
+    blogmodel.find({"email":req.body.email}).then(
+        (response)=>{
+            // console.log(response)
+            if (response.length>0) {
+                let dbpasswd=response[0].passwd
+                console.log(dbpasswd)
+                bcryptjs.compare(input.passwd,dbpasswd,(error,isMatch)=>{
+                    if (isMatch) {
+                        res.json({"status": "success","userId":response[0]._id})
+                        
+                    } else {
+                        res.json({"status": "incorrect" })
+                        
+                    }
+                })
+                
+            } else {
+                res.json({"status":"No User"})
+            }
+        }
+    )
+
+
+})
+
 
 
 app.listen(8086, () => {
